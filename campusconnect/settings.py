@@ -13,12 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -29,9 +25,14 @@ SECRET_KEY = 'django-insecure-@9-gpo^$j&h#s0__1)^0(d2$4%b_i5yhw$^=#yza-e5024ab8#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", ".ngrok-free.app", ".ngrok.io"]  # Allow ngrok domains
+ALLOWED_HOSTS = [
+    "*", "127.0.0.1", "localhost", ".ngrok-free.app", ".ngrok.io"
+]  # Allow ngrok domains
 
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "http://localhost","https://127.0.0.1","https://*.ngrok.io", "https://*.ngrok-free.app"]  # Trust ngrok for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.sisko.replit.dev", "http://127.0.0.1", "http://localhost",
+    "https://127.0.0.1", "https://*.ngrok.io", "https://*.ngrok-free.app"
+]  # Trust ngrok for CSRF
 
 SESSION_COOKIE_SECURE = False  # Disable secure session cookies (for testing on ngrok)
 CSRF_COOKIE_SECURE = False  # Disable CSRF secure cookie (for testing on ngrok)
@@ -53,8 +54,6 @@ INSTALLED_APPS = [
     'C2',
 ]
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this line
@@ -74,15 +73,13 @@ STATIC_URL = '/static/'
 
 # Add this line to specify the location of your static files in development
 STATICFILES_DIRS = [
-    BASE_DIR / "C2/static/C2",  # This tells Django where to find static files like CSS, JS, images in the C2 app
+    BASE_DIR /
+    "C2/static/C2",  # This tells Django where to find static files like CSS, JS, images in the C2 app
 ]
 
 AUTH_USER_MODEL = 'C2.CustomUser'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-
-
 
 # settings.py
 
@@ -94,7 +91,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'C2/templates/C2',  # This tells Django where to look for your templates
+            BASE_DIR /
+            'C2/templates/C2',  # This tells Django where to look for your templates
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -108,9 +106,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'campusconnect.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -127,22 +123,24 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
 # Media files (for uploaded images)
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -156,12 +154,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -172,7 +166,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # If using Gmail

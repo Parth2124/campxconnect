@@ -3,7 +3,11 @@ run = "python3 manage.py runserver 0.0.0.0:8000"
 
 [nix]
 channel = "stable-24_05"
-packages = ["glibcLocales", "pgadmin4"]
+packages = ["freetype", "glibcLocales", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "pgadmin4", "tcl", "tk", "zlib"]
 
 [deployment]
 run = ["sh", "-c", "python3 manage.py runserver 0.0.0.0:8000"]
+
+[[ports]]
+localPort = 8000
+externalPort = 80
