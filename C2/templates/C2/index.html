@@ -83,6 +83,7 @@
         .header .logo {
             font-size: 30px;
             font-weight: 800;
+            color: var(--secondary-color);
             letter-spacing: -1px;
             background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
             -webkit-background-clip: text;
@@ -105,20 +106,18 @@
         }
 
         .header a {
+            color: var(--text-color);
             text-decoration: none;
             font-size: 16px;
             font-weight: 600;
             padding: 8px 16px;
             border-radius: 25px;
-            transition: transform 0.2s ease;
+            transition: color 0.3s ease, background 0.3s ease, transform 0.2s ease;
             position: relative;
-            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .header a:hover {
+            color: var(--highlight-color);
             transform: scale(1.05);
         }
 
@@ -1245,14 +1244,6 @@
 
     <!-- Script -->
     <script>
-        // Apply the theme immediately on load to ensure gradient consistency
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            const toggleIcon = document.querySelector('.theme-toggle i');
-            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        })();
-
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('active');
@@ -1270,11 +1261,6 @@
             localStorage.setItem('theme', newTheme);
             const toggleIcon = document.querySelector('.theme-toggle i');
             toggleIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-
-            // Force re-render of gradient text after theme change
-            document.querySelectorAll('.header a, .header .logo').forEach(el => {
-                el.style.background = 'linear-gradient(90deg, var(--primary-color), var(--highlight-color))';
-            });
         }
 
         window.addEventListener('scroll', () => {
@@ -1291,6 +1277,11 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
             const boxes = document.querySelectorAll('.box, .gallery-item, .highlight-card, .leader-card, .calendar-card, .stat-item');
             boxes.forEach((box, index) => {
                 box.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
