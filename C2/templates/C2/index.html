@@ -1146,10 +1146,14 @@
     </div>
 
     <!-- Campus Leaders -->
-    <div class="leaders-section">
-        <h2>Campus Leaders</h2>
-        <div class="leaders-grid">
-            {% for leader in leaders %}
+        <div class="leaders-section">
+            <h2>Campus Leaders</h2>
+            <div class="leaders-grid">
+        {% for leader in leaders %}
+            <a href="{% if leader.link %}{{ leader.link }}{% else %}#{% endif %}" 
+                {% if leader.link %}target="_blank"{% endif %}
+                onclick="{% if not leader.link %}location.reload(); return false;{% endif %}"
+                style="text-decoration: none; color: inherit;" >
                 <div class="leader-card">
                     {% if leader.image %}
                         <img src="{{ leader.image.url }}" alt="{{ leader.name }}">
@@ -1159,12 +1163,13 @@
                     <h4>{{ leader.name }}</h4>
                     <p>{{ leader.position }}</p>
                 </div>
-            {% empty %}
-                <p>No leaders listed yet.</p>
-            {% endfor %}
-        </div>
+            </a>
+        {% empty %}
+            <p>No leaders listed yet.</p>
+        {% endfor %}
     </div>
 
+        </div>
     <!-- Event Calendar -->
     <!-- <div class="calendar-section">
         <h2>Event Calendar</h2>

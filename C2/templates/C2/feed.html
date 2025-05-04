@@ -655,37 +655,50 @@
         </div>
         <div class="feed-grid">
             {% for post in event_posts %}
-                <div class="feed-post" data-username="{{ post.user.username|lower }}" data-title="{{ post.event_title|lower }}" data-caption="{{ post.caption|lower }}" data-date="{{ post.created_at|date:'M d, Y'|lower }}" data-post-url="{% url 'post_detail' post.id %}">
-                    <div class="feed-header">
-                        <div class="post-marker">
-                            <i class="fas fa-user-graduate"></i>
+                <a href="{{ post.link|default:'javascript:location.reload();' }}" class="feed-post-link">
+                    <div class="feed-post" 
+                         data-username="{{ post.user.username|lower }}" 
+                         data-title="{{ post.event_title|lower }}" 
+                         data-caption="{{ post.caption|lower }}" 
+                         data-date="{{ post.created_at|date:'M d, Y'|lower }}" 
+                         data-post-url="{% url 'post_detail' post.id %}">
+
+                        <div class="feed-header">
+                            <div class="post-marker">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="user-info">
+                                <p class="user-name">{{ post.user.first_name }}</p>
+                                <span class="user-details">{{ post.user.department.name }} | {{ post.user.institution.name }}</span>
+                                <span class="feed-timestamp">{{ post.created_at|date:"M d, Y" }}</span>
+                            </div>
                         </div>
-                        <div class="user-info">
-                            <p class="user-name">{{ post.user.first_name }}</p>
-                            <span class="user-details">{{ post.user.department.name }} | {{ post.user.institution.name }}</span>
-                            <span class="feed-timestamp">{{ post.created_at|date:"M d, Y" }}</span>
+
+                        <h3 class="feed-event-title">{{ post.event_title }}</h3>
+
+                        {% if post.image %}
+                            <div class="feed-image">
+                                <img src="{{ post.image.url }}" alt="Event Post Image" loading="lazy">
+                            </div>
+                        {% else %}
+                            <div class="feed-image">
+                                <img src="{% static 'images/default.jpg' %}" alt="Default Image" loading="lazy">
+                            </div>
+                        {% endif %}
+
+                        <p class="feed-caption">{{ post.caption }}</p>
+
+                        <div class="feed-actions">
+                            <button class="share-btn" data-url="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"><i class="fas fa-share-alt"></i></button>
+                            <button class="comment-btn"><i class="fas fa-comment"></i></button>
                         </div>
                     </div>
-                    <h3 class="feed-event-title">{{ post.event_title }}</h3>
-                    {% if post.image %}
-                        <div class="feed-image">
-                            <img src="{{ post.image.url }}" alt="Event Post Image" loading="lazy">
-                        </div>
-                    {% else %}
-                        <div class="feed-image">
-                            <img src="{% static 'images/default.jpg' %}" alt="Default Image" loading="lazy">
-                        </div>
-                    {% endif %}
-                    <p class="feed-caption">{{ post.caption }}</p>
-                    <div class="feed-actions">
-                        <button class="share-btn" data-url="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"><i class="fas fa-share-alt"></i></button>
-                        <button class="comment-btn"><i class="fas fa-comment"></i></button>
-                    </div>
-                </div>
+                </a>
             {% empty %}
                 <p class="no-posts">🚀 No event posts yet. Stay tuned!</p>
             {% endfor %}
         </div>
+
     </div>
 
     <!-- Footer -->

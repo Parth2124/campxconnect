@@ -151,6 +151,8 @@ class Leader(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
     image = models.ImageField(upload_to='leaders/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True)  # optional link
+
 
     def __str__(self):
         return self.name
@@ -180,6 +182,8 @@ class EventPost(models.Model):
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE, null=True, blank=True)
+    link = models.URLField(blank=True, null=True)  # optional link
+
 
     def __str__(self):
         return f"{self.user.username} - {self.event_title}"
