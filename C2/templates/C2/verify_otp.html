@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <title>Verify OTP</title>
+    <style>
+        /* Global Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #091e1f 0%, #1a3c3d 100%);
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+        }
+
+        /* Signup Page (Reused for OTP Verification) */
+        .signup-page {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .signup-box {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(200, 200, 200, 0.85));
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signup-box h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #091e1f;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Input Styles */
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(9, 30, 31, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #091e1f;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00aaff;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(9, 30, 31, 0.6);
+            opacity: 1;
+        }
+
+        /* Button Styles */
+        .form-actions button {
+            background: linear-gradient(90deg, #091e1f, #1a3c3d);
+            color: #ffffff;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-actions button:hover {
+            background: linear-gradient(90deg, #00aaff, #007acc);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+        }
+
+        .form-actions button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Alert Box Styles */
+        .alert-box {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 280px;
+            animation: fadeIn 0.5s ease-in-out;
+            transition: opacity 0.5s ease;
+        }
+
+        .success {
+            background: #e6ffed;
+            color: #1a3c34;
+            border-left: 6px solid #2ecc71;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #4a1a1a;
+            border-left: 6px solid #e74c3c;
+        }
+
+        .warning {
+            background: #fff4e6;
+            color: #4a3a1a;
+            border-left: 6px solid #f1c40f;
+        }
+
+        .info {
+            background: #e6f3ff;
+            color: #1a2a4a;
+            border-left: 6px solid #3498db;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: inherit;
+            margin-left: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .signup-box {
+                padding: 1.5rem;
+                max-width: 90%;
+            }
+
+            .signup-box h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-group input {
+                padding: 0.65rem;
+                font-size: 0.95rem;
+            }
+
+            .form-actions button {
+                padding: 0.8rem;
+                font-size: 0.95rem;
+            }
+
+            .alert-box {
+                min-width: 90%;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .signup-box {
+                padding: 1.2rem;
+            }
+
+            .signup-box h2 {
+                font-size: 1.25rem;
+            }
+
+            .form-group input {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-page">
+        <div class="signup-box">
+            <h2>Verify Your Email</h2>
+            <form method="post" action="{% url 'verify_otp' user_id=user_id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="otp" required placeholder="Enter OTP">
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Verify</button>
+                </div>
+            </form>
+            {% if messages %}
+            <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                {% for message in messages %}
+                    <div id="message-box-{{ forloop.counter }}" 
+                        class="alert-box {{ message.tags }}">
+                        {% if message.tags == 'success' %}
+                            ✅
+                        {% elif message.tags == 'error' %}
+                            ❌
+                        {% elif message.tags == 'warning' %}
+                            ⚠️
+                        {% else %}
+                            ℹ️
+                        {% endif %}
+                        <span style="margin-left: 10px;">{{ message }}</span>
+                        <button class="close-btn" onclick="this.parentElement.style.display='none'">✖</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <script>
+                setTimeout(() => {
+                    document.querySelectorAll(".alert-box").forEach(box => {
+                        box.style.opacity = "0";
+                        setTimeout(() => box.style.display = "none", 500);
+                    });
+                }, 5000);
+            </script>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

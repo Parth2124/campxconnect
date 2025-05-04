@@ -1,0 +1,925 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile | CampXConnect</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode */
+            --primary-color: #00A1FF;
+            --secondary-color: #1A2B3C;
+            --text-color: #2D3748;
+            --highlight-color: #FF3E81;
+            --neutral-bg: #F7FAFC;
+            --white-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-bg: #FFFFFF; /* Solid white for light mode */
+
+            /* Dark Mode */
+            --dark-primary-color: #4DA8FF;
+            --dark-secondary-color: #E2E8F0;
+            --dark-text-color: #E2E8F0;
+            --dark-highlight-color: #FF6B9C;
+            --dark-neutral-bg: #2D3748;
+            --dark-bg: #1A202C;
+            --dark-shadow-color: rgba(0, 0, 0, 0.3);
+            --dark-gradient-bg: linear-gradient(135deg, #2D3748, #1A202C);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: var(--dark-primary-color);
+            --secondary-color: var(--dark-secondary-color);
+            --text-color: var(--dark-text-color);
+            --highlight-color: var(--dark-highlight-color);
+            --neutral-bg: var(--dark-neutral-bg);
+            --white-bg: var(--dark-bg);
+            --shadow-color: var(--dark-shadow-color);
+            --gradient-bg: var(--dark-gradient-bg);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            background: var(--white-bg); /* Solid white background */
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            background: transparent;
+        }
+
+        .header.scrolled {
+            background: var(--white-bg);
+            box-shadow: 0 2px 15px var(--shadow-color);
+        }
+
+        .header .logo {
+            font-size: 30px;
+            font-weight: 800;
+            color: wheat;
+            letter-spacing: -1px;
+            
+        }
+
+        .header .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .header .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .header a:hover {
+            color: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        .header a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--highlight-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .header a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .header .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .header .hamburger:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--white-bg);
+            padding: 40px 20px;
+            z-index: 2000;
+            transition: left 0.5s ease;
+            box-shadow: 2px 0 15px var(--shadow-color);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .close-btn {
+            font-size: 36px;
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: right;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .close-btn:hover {
+            color: var(--highlight-color);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        /* Profile Container */
+        .profile-container {
+            max-width: 600px;
+            margin: 140px auto 40px;
+            background: var(--neutral-bg);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .profile-header {
+            font-size: 28px;
+            font-weight: 800;
+            color: wheat;
+            margin-bottom: 20px;
+          
+        }
+
+        .profile-details {
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .profile-details p {
+            margin: 10px 0;
+            color: var(--text-color);
+        }
+
+        .profile-details p strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .host-event-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .host-event-btn:hover {
+            background: linear-gradient(135deg, var(--highlight-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        /* Message Container */
+        .message-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .alert-success {
+            background: #28a745;
+            color: #FFFFFF;
+        }
+
+        .alert-danger {
+            background: #dc3545;
+            color: #FFFFFF;
+        }
+
+        /* Post Container */
+        .post-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1440px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+
+        .post-card {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 161, 255, 0.1), transparent);
+            transition: transform 0.5s ease;
+            z-index: 0;
+        }
+
+        .post-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .post-card h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin: 10px 0;
+        }
+
+        .post-card p {
+            font-size: 14px;
+            color: var(--text-color);
+            margin: 8px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feed-image {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .post-card:hover .feed-image {
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: #FFFFFF;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #b52b3a;
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--white-bg);
+            padding: 30px;
+            border-radius: 20px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-content .close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-content .close:hover {
+            color: var(--highlight-color);
+        }
+
+        .modal-content h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .modal-content label {
+            display: block;
+            font-size: 16px;
+            color: var(--text-color);
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: var(--neutral-bg);
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content input:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 161, 255, 0.3);
+        }
+
+        .modal-content textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, var(--highlight-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background: linear-gradient(135deg, var(--highlight-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+
+    .delete-btn {
+        position: relative;
+        z-index: 999;
+        cursor: pointer;
+    }
+
+    form {
+        z-index: 999;
+        position: relative;
+    }
+
+    .post-card {
+        position: relative;
+        z-index: 1;
+    }
+
+
+
+        /* Event Sections */
+        .event-section {
+            max-width: 1440px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+
+        .event-section h3 {
+            font-size: 32px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 40px;
+            
+        }
+
+        .event-card {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.4s ease;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 161, 255, 0.1), transparent);
+            transition: transform 0.5s ease;
+            z-index: 0;
+        }
+
+        .event-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .event-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .event-card:hover .event-image {
+            transform: scale(1.05);
+        }
+
+        .event-info {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-info h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .event-info p {
+            font-size: 14px;
+            color: var(--text-color);
+            margin: 8px 0;
+        }
+
+        .event-info p strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-bg);
+            padding: 120px 40px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+        }
+
+        .footer-section h4 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .footer-section p, .footer-section ul li a {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-color);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--highlight-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: rgba(45, 55, 72, 0.8);
+        }
+
+        [data-theme="dark"] .footer-bottom {
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header .nav-center, .header .nav-right {
+                display: none;
+            }
+
+            .header .hamburger {
+                display: block;
+            }
+
+            .profile-container {
+                margin: 100px auto 20px;
+                padding: 15px;
+                width: 90%;
+            }
+
+            .post-container {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+
+            .event-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .event-image {
+                width: 100%;
+                height: auto;
+                margin: 0 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-header {
+                font-size: 24px;
+            }
+
+            .event-section h3 {
+                font-size: 26px;
+            }
+
+            .event-info h4 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">CampXConnect</div>
+        <div class="nav-center">
+            <a href="{% url 'index' %}">Home</a>
+            <!-- <a href="{% url 'index' %}#highlights-section">CXGallery</a> -->
+            <!-- <a href="{% url 'index' %}#trending-section">CXTrending</a> -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'feed' %}">Feed</a>
+                <a href="{% url 'upcoming' %}">Events</a>
+            {% endif %}
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" onclick="toggleSidebar()">×</div>
+        {% if user.is_authenticated %}
+            <p>Hey, {{ user.first_name }}!</p>
+        {% endif %}
+        <a href="{% url 'index' %}">Home</a>
+        <!-- <a href="{% url 'index' %}#highlights-section">CXGallery</a> -->
+        <!-- <a href="{% url 'index' %}#trending-section">CXTrending</a> -->
+        {% if user.is_authenticated %}
+            <a href="{% url 'feed' %}">Feed</a>
+            <a href="{% url 'upcoming' %}">Events</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-container">
+        <h2 class="profile-header">{{ user.first_name }}'s Profile</h2>
+        <div class="profile-details">
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Department:</strong> {{ user.department }}</p>
+            <p><strong>College Code:</strong> {{ user.code }}</p>
+        </div>
+        <a href="{% url 'host_event' %}" class="host-event-btn">Host an Event</a>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+ <!-- User Posts -->
+<div class="post-container">
+    {% for post in user_posts %}
+        <div class="post-card">
+            <p><strong>{{ post.user.username }}</strong> posted:</p>
+            <h4>{{ post.event.name }}</h4>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post Image" class="feed-image">
+            {% endif %}
+            <p>{{ post.caption }}</p>
+            {% if request.user == post.user %}
+                <form action="{% url 'delete-post' post.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <!-- <p>No posts yet.</p> -->
+    {% endfor %}
+</div>
+
+<!-- Post Upload Modal - Show for superusers OR users who have hosted events -->
+{% if request.user.is_superuser or upcoming_events %}
+    <!-- Post Upload Modal -->
+    <div class="container">
+        <button id="openPostModal" class="btn-upload">Post Your Events</button>
+        <div id="postModal" class="modal">
+            <div class="modal-content">
+                <span class="close">×</span>
+                <h3>Create a Post</h3>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'post_event' %}">
+                    {% csrf_token %}
+                    <label for="event_title">Event Title:</label>
+                    <input type="text" name="event_title" required>
+                    <label for="caption">Caption:</label>
+                    <textarea name="caption" required></textarea>
+                    <label for="image">Image:</label>
+                    <input type="file" name="image">
+                    <button type="submit" class="btn-submit">Post Event</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+    <!-- Upcoming Events Hosted -->
+    <div class="event-section">
+        <h3>Upcoming Events Hosted</h3>
+        {% if upcoming_events %}
+            {% for event in upcoming_events %}
+                <div class="event-card">
+                    <img src="{{ event.image.url }}" alt="{{ event.name }}" class="event-image">
+                    <div class="event-info">
+                        <h4>{{ event.name }}</h4>
+                        <p>{{ event.description }}</p>
+                        <p><strong>Date:</strong> {{ event.date }}</p>
+                        <p><strong>Venue:</strong> {{ event.venue }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No upcoming events hosted yet.</p>
+        {% endif %}
+    </div>
+
+   
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>CampX is your go-to platform for staying updated on all college events and activities.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: parthkhannaa@gmail.com</p>
+            <p>Phone: +91-8130112729</p>
+            <p>Address: MRIIRS</p>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CampX. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            const postCards = document.querySelectorAll('.post-card');
+            const eventCards = document.querySelectorAll('.event-card');
+            postCards.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+            eventCards.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+
+            const modal = document.getElementById('postModal');
+            const openModal = document.getElementById('openPostModal');
+            const closeModal = document.querySelector('.modal-content .close');
+
+            openModal.onclick = function() {
+                modal.style.display = 'flex';
+            };
+
+            closeModal.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+    </script>
+</body>
+</html>

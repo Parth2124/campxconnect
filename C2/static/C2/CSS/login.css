@@ -1,0 +1,177 @@
+ body {
+            background-color: #091e1f; /* Body background color */
+            color: white; /* Default text color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header Styles */
+        header {
+            text-align: center;
+            padding: 20px;
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            background-color: #091e1f;
+        }
+
+        .video-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 13px auto;
+            width: 90%;
+            max-width: 300px; /* Set a max width for the video section */
+        }
+        
+        .video-section video {
+            width: 100%; /* Make the video take the full width of the container */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 10px; /* Optional: Add rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow */
+        }
+        
+        
+        /* Login Page Styles */
+        .login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            background-color: #091e1f; /* Keep background same */
+        }
+        
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.911); /* Transparent background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 350px;
+            text-align: center;
+            backdrop-filter: blur(70px); /* Add blur effect */
+        }
+        
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #091e1f;
+        }
+        
+        /* Form Input Styles */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #041010; /* Blue border */
+            border-radius: 5px;
+            background-color: transparent;
+            color: #091e1f;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group input::placeholder {
+            color: #091e1f; /* Light gray placeholder */
+        }
+        
+        /* Button Styles */
+        .form-actions .btn {
+            background-color: #091e1f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .form-actions .btn:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        
+        /* Forgot Password and Sign Up Links */
+        .forgot-password {
+            margin-top: 20px;
+        }
+        
+        .forgot-password a {
+            color: #091e1f;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .forgot-password span {
+            color: white;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+        
+        /* Form Actions Styles */
+        .form-actions {
+            margin-top: 20px;
+        }
+        
+        /* Button Styles */
+        .form-actions button {
+            background-color: #091e1f; /* Button blue */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 50%; /* Full-width button */
+        }
+        
+        .form-actions button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05); /* Slight scale-up effect */
+        }
+        
+        .form-actions button:active {
+            background-color: #003366; /* Even darker blue when pressed */
+            transform: scale(1); /* Reset scaling on click */
+        }
+        
+        /* Responsive Styles for Small Screens */
+       /* Responsive Styles for Small Screens */
+@media (max-width: 768px) {
+    .login-box {
+        width: 84%; /* Adjust width for smaller screens */
+        padding: 20px; /* Reduce padding */
+    }
+
+    .login-box h2 {
+        font-size: 20px; /* Adjust heading size */
+    }
+
+    .form-group input {
+        padding: 8px; /* Reduce input padding */
+        font-size: 12px; /* Adjust input font size */
+        width: calc(100% - 2px); /* Ensure input stays within box, accounting for borders */
+        box-sizing: border-box; /* Include padding and border in width calculation */
+    }
+
+    .form-actions button {
+        font-size: 14px; /* Adjust button font size */
+        padding: 10px; /* Reduce button padding */
+    }
+
+    .forgot-password {
+        font-size: 12px; /* Adjust link font size */
+    }
+}

@@ -1,0 +1,244 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #091e1f;
+    color: #fff;
+}
+
+.corner {
+    flex: 1;
+    text-align: left;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.center {
+    flex: 2;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+#top-right {
+    flex: 1;
+    text-align: right;
+    padding-right: -2px; /* Adds some padding on the right to move it a bit further */
+}
+
+#category-dropdown {
+    padding: 5px 12px;  /* Adjusted padding */
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #091e1f;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#category-dropdown:hover {
+    background-color: #091e1f;
+}
+
+/* For mobile screens, reduce size */
+@media (max-width: 768px) {
+    #category-dropdown {
+        font-size: 10px;
+        padding: 1px 2px; /* Make padding smaller */
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Event Container for 2 items per row */
+.event-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Always 2 cards per row */
+    gap: 20px;
+    padding: 20px;
+}
+
+.event-box {
+    display: flex;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-box img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.event-details h3 {
+    margin: 0 0 10px;
+}
+
+.event-details p {
+    margin: 5px 0;
+}
+
+.apply-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.apply-button:hover {
+    background-color: #0056b3;
+}
+
+/* For small screens: 1 card per row */
+@media (max-width: 768px) {
+    .event-container {
+        grid-template-columns: 1fr; /* 1 card per row */
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+
+    .event-box {
+        margin: 10px 0; /* Reduce margin for smaller screens */
+        padding: 15px;
+    }
+
+    .event-box img {
+        width: 100%; /* Image takes full width */
+        height: auto; /* Maintain aspect ratio */
+        margin-bottom: 10px; /* Add spacing between image and text */
+    }
+
+    .apply-button {
+        font-size: 14px; /* Adjust button size */
+        padding: 8px 15px;
+    }
+}
+
+/* Footer styles */
+.footer {
+    background-color: #091e1f;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+    flex-wrap: wrap;
+}
+
+.footer-section {
+    flex: 1;
+    margin: 10px;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid white;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.footer-section p,
+.footer-section ul {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin: 5px 0;
+}
+
+.footer-section ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #007bff;
+}
+
+/* Responsive design for footer */
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+    }
+    .footer-section {
+        margin-bottom: 20px;
+    }
+}
+
+/* Logout Button */
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.logout-btn {
+    background-color: #1f2c30;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-size: 12px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: #d9534f;
+    transform: scale(1.05);
+}
+
+.logout-btn:active {
+    background-color: #091e1f;
+    transform: scale(1);
+}
+
+@media (max-width: 768px) {
+    .logout-button {
+        top: 20px;
+        right: 10px;
+    }
+    .logout-btn {
+        font-size: 11px;
+    }
+}

@@ -1,0 +1,1389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampX</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode */
+            --primary-color: #00A1FF;
+            --secondary-color: #1A2B3C;
+            --text-color: #2D3748;
+            --highlight-color: #FF3E81;
+            --neutral-bg: #F7FAFC;
+            --white-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-bg: linear-gradient(135deg, #E6F0FA, #FFFFFF);
+
+            /* Dark Mode */
+            --dark-primary-color: #4DA8FF;
+            --dark-secondary-color: #E2E8F0;
+            --dark-text-color: #E2E8F0;
+            --dark-highlight-color: #FF6B9C;
+            --dark-neutral-bg: #2D3748;
+            --dark-bg: #1A202C;
+            --dark-shadow-color: rgba(0, 0, 0, 0.3);
+            --dark-gradient-bg: linear-gradient(135deg, #2D3748, #1A202C);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: var(--dark-primary-color);
+            --secondary-color: var(--dark-secondary-color);
+            --text-color: var(--dark-text-color);
+            --highlight-color: var(--dark-highlight-color);
+            --neutral-bg: var(--dark-neutral-bg);
+            --white-bg: var(--dark-bg);
+            --shadow-color: var(--dark-shadow-color);
+            --gradient-bg: var(--dark-gradient-bg);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            background: var(--gradient-bg);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            background: transparent;
+        }
+
+        .header.scrolled {
+            background: var(--white-bg);
+            box-shadow: 0 2px 15px var(--shadow-color);
+        }
+
+        .header .logo {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--secondary-color);
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .header .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: color 0.3s ease, background 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .header a:hover {
+            color: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        .header a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--highlight-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .header a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .header .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .header .hamburger:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--white-bg);
+            padding: 40px 20px;
+            z-index: 2000;
+            transition: left 0.5s ease;
+            box-shadow: 2px 0 15px var(--shadow-color);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .close-btn {
+            font-size: 36px;
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: right;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .close-btn:hover {
+            color: var(--highlight-color);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 250px 20px;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            animation: backgroundChange 18s infinite ease-in-out;
+        }
+
+        @keyframes backgroundChange {
+            0% { background-image: url('{% static "C2/images/bgthree.png" %}'); }
+            20% { background-image: url('{% static "C2/images/bgtwo.png" %}'); }
+            40% { background-image: url('{% static "C2/images/bgthree.png" %}'); }
+            60% { background-image: url('{% static "C2/images/bgfour.jpg" %}'); }
+            80% { background-image: url('{% static "C2/images/bgfive.jpg" %}'); }
+            100% { background-image: url('{% static "C2/images/bgthree.png" %}'); }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(13, 27, 42, 0.7), rgba(0, 161, 255, 0.2));
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            font-weight: 800;
+            color: #FFFFFF;
+            position: relative;
+            z-index: 2;
+            max-width: 90%;
+            margin: 0 auto;
+            letter-spacing: -2px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 24px;
+            font-weight: 300;
+            color: #E2E8F0;
+            position: relative;
+            z-index: 2;
+            max-width: 70%;
+            margin: 20px auto;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .scroll-down i {
+            font-size: 36px;
+            color: #FFFFFF;
+            animation: bounce 2s infinite ease;
+            transition: color 0.3s ease;
+        }
+
+        .scroll-down i:hover {
+            color: var(--highlight-color);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
+        /* ImpNews Splash */
+        .impnews-splash {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            z-index: 3000;
+            color: var(--text-color);
+            max-width: 500px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .impnews-splash .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 28px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .impnews-splash .close-btn:hover {
+            color: var(--highlight-color);
+        }
+
+        .impnews-splash h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .impnews-splash p {
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        /* Content Section */
+        .content-section {
+            max-width: 1440px;
+            margin: 140px auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+        }
+
+        .box {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 161, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 161, 255, 0.1), transparent);
+            transition: transform 0.5s ease;
+            z-index: 0;
+        }
+
+        .box:hover::before {
+            transform: scale(1.5);
+        }
+
+        .box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .box h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .box-item {
+            background: var(--white-bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
+        }
+
+        .box-item:hover {
+            color: rgb(65, 49, 20);
+            transform: scale(1.02);
+        }
+
+        .box-item img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .box-item.no-image {
+            justify-content: center;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .clickable-box:not(.authenticated):hover {
+            background-color: wheat;
+            color: #FFFFFF;
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .gallery-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            color: var(--secondary-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 40px;
+        }
+
+        .gallery-item {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item p {
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-color);
+        }
+
+        /* Highlights Section */
+        .highlights-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+            background-color: var(--dark-bg);
+            color: #FFFFFF;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .highlights-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--highlight-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 40px;
+        }
+
+        .highlight-card {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .highlight-card:hover {
+            transform: scale(1.02);
+        }
+
+        .highlight-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .highlight-card .highlight-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            color: #FFFFFF;
+        }
+
+        .highlight-card .highlight-overlay h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .highlight-card .highlight-overlay p {
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .highlight-card .highlight-overlay .highlight-date {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--highlight-color);
+        }
+
+        /* Full-Screen Overlay for Highlights */
+        .overlay#highlight-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay#highlight-overlay.active {
+            display: flex;
+        }
+
+        /* Full-Screen Overlay for Latest News */
+        .overlay#news-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .overlay#news-overlay.active {
+            display: flex;
+        }
+
+        .overlay-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            background: var(--white-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .overlay-content img {
+            width: 100%;
+            height: auto;
+            max-height: 50vh;
+            object-fit: cover;
+            display: block;
+        }
+
+        .overlay-details {
+            padding: 30px;
+            color: var(--text-color);
+            overflow-y: auto;
+            max-height: 40vh;
+        }
+
+        .overlay-details h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            line-height: 1.3;
+        }
+
+        .overlay-details p {
+            font-size: 16px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .overlay-details strong {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .overlay .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 28px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            z-index: 1;
+            background: var(--white-bg);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .overlay .close-btn:hover {
+            color: var(--highlight-color);
+            background: var(--neutral-bg);
+        }
+
+        /* Leaders Section */
+        .leaders-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+        }
+
+        .leaders-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .leader-card {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .leader-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .leader-card img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .leader-card h4 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+
+        .leader-card p {
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+        }
+
+        .calendar-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+        }
+
+        .calendar-card {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s ease;
+        }
+
+        .calendar-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .calendar-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .calendar-card p {
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* Trending Section */
+        .trending-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+        }
+
+        .trending-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            max-width: 1440px;
+            margin: 160px auto;
+            padding: 0 40px;
+        }
+
+        .stats-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .stat-item {
+            background: var(--neutral-bg);
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 260px;
+            transition: all 0.4s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .stat-item h4 {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-bg);
+            padding: 120px 40px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+        }
+
+        .footer-section h4 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .footer-section p, .footer-section ul li a {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-color);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--highlight-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: rgba(45, 55, 72, 0.8);
+        }
+
+        [data-theme="dark"] .footer-bottom {
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header .nav-center, .header .nav-right {
+                display: none;
+            }
+
+            .header .hamburger {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .content-section, .gallery-grid, .highlights-grid, .leaders-grid, .calendar-grid, .trending-grid {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+
+            .scroll-down i {
+                font-size: 28px;
+            }
+
+            .highlights-section h2 {
+                font-size: 34px;
+            }
+
+            .overlay-content {
+                max-width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .gallery-section h2, .highlights-section h2, .leaders-section h2, .calendar-section h2, .trending-section h2, .stats-section h2 {
+                font-size: 34px;
+            }
+
+            .overlay-content img {
+                max-height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">CampXConnect</div>
+        <div class="nav-center">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="#highlights-section">CXStories</a>
+            <a href="#trending-section">CXTrending</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'upcoming' %}">Events</a>            
+                <a href="{% url 'feed' %}">Feed</a>
+                <a href="{% url 'profile' user.email %}"><i class="fas fa-user"></i></a>
+            {% endif %}
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" onclick="toggleSidebar()">×</div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="#highlights-section">CXStories</a>
+        <a href="#trending-section">CXTrending</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'upcoming' %}">Events</a>
+            <a href="{% url 'feed' %}">Feed</a>
+            <a href="{% url 'profile' user.email %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- ImpNews Splash -->
+    {% if impnews_list %}
+        <div class="impnews-splash" id="impnews-splash">
+            <span class="close-btn" onclick="document.getElementById('impnews-splash').style.display = 'none'">×</span>
+            {% for news in impnews_list|slice:":1" %}
+            <h2>{{user.code}}</h2>
+                <h3>{{ news.title }}</h3>
+                <p>{{ news.content }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1 id="hero-h1"></h1>
+        <p id="hero-p"></p>
+        <div class="scroll-down" onclick="scrollToContent()">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+        <div class="box">
+            <h3>About Us</h3>
+            <p>CampX blends old-school vibes with cutting-edge tech for an epic college experience.</p>
+        </div>
+
+        <div class="box clickable-box {% if not user.is_authenticated %}not-authenticated{% endif %}" onclick="{% if user.is_authenticated %}window.location.href='{% url 'upcoming' %}'{% else %}window.location.href='{% url 'login' %}'{% endif %}">
+            <h3>Upcoming Events</h3>
+            {% for event in upcoming_events|slice:":3" %}
+                <div class="box-item {% if not event.image %}no-image{% endif %}">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% endif %}
+                    <div>
+                        <p>{{ event.title }}</p>
+                        <p>{{ event.date }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No upcoming events yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="box">
+            <h3>Latest News</h3>
+            {% for news in mrnews_list|slice:":3" %}
+                <div class="box-item {% if not news.image %}no-image{% endif %}" 
+                     onclick="openNewsOverlay('{{ news.image.url|default:'' }}', '{{ news.title|escapejs }}', '{{ news.description|safe|escapejs }}', '{{ news.category.name|default:"N/A"|escapejs }}', '{{ news.published_date|date:"F d, Y"|escapejs }}', '{{ news.by|default:"N/A"|escapejs }}', '{{ news.institution.name|default:"N/A"|escapejs }}', '{{ news.college.code|default:"N/A"|escapejs }}')">
+                    {% if news.image %}
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                    {% endif %}
+                    <div>
+                        <strong style="font-weight: bold;">{{ news.title }}</strong>
+                        <p>{{ news.published_date|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No news available.</p>
+            {% endfor %}
+        </div>
+
+        <div class="box clickable-box {% if not user.is_authenticated %}not-authenticated{% endif %}" onclick="{% if user.is_authenticated %}window.location.href='{% url 'feed' %}'{% else %}window.location.href='{% url 'login' %}'{% endif %}">
+            <h3>Event Posts</h3>
+            {% for post in posts|slice:":3" %}
+                <div class="box-item {% if not post.image %}no-image{% endif %}">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.event_title }}">
+                    {% endif %}
+                    <div>
+                        <p>{{ post.event_title }}</p>
+                        <p>By: {{ post.user.first_name }} - {{ post.created_at|date:"M d" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No posts yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Campus Highlights -->
+    <div class="highlights-section" id="highlights-section">
+        <h2>Campus Highlights</h2>
+        <div class="highlights-grid">
+            {% for highlight in highlights %}
+                <div class="highlight-card" onclick="openOverlay('{{ highlight.image.url }}', '{{ highlight.title }}', '{{ highlight.winner|default:"N/A" }}', '{{ highlight.date|date:"F d, Y" }}', '{{ highlight.description|safe|default:"" }}')">
+                    {% if highlight.image %}
+                        <img src="{{ highlight.image.url }}" alt="{{ highlight.title }}">
+                    {% endif %}
+                    <div class="highlight-overlay">
+                        <h3>{{ highlight.title }}</h3>
+                        <p>{{ highlight.description|safe }}</p>
+                        <p class="highlight-date">{{ highlight.date|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No highlights available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Full-Screen Overlay for Highlights -->
+    <div class="overlay" id="highlight-overlay">
+        <div class="overlay-content">
+            <span class="close-btn" onclick="closeOverlay()">×</span>
+            <img src="" alt="Highlight Image" id="overlay-image">
+            <div class="overlay-details" id="overlay-details"></div>
+        </div>
+    </div>
+
+    <!-- Full-Screen Overlay for Latest News -->
+    <div class="overlay" id="news-overlay">
+        <div class="overlay-content">
+            <span class="close-btn" onclick="closeNewsOverlay()">×</span>
+            <img src="" alt="News Image" id="news-overlay-image">
+            <div class="overlay-details" id="news-overlay-details"></div>
+        </div>
+    </div>
+
+    <!-- Campus Leaders -->
+    <div class="leaders-section">
+        <h2>Campus Leaders</h2>
+        <div class="leaders-grid">
+            {% for leader in leaders %}
+                <div class="leader-card">
+                    {% if leader.image %}
+                        <img src="{{ leader.image.url }}" alt="{{ leader.name }}">
+                    {% else %}
+                        <div style="width: 140px; height: 140px; background: var(--neutral-bg); border-radius: 50%;"></div>
+                    {% endif %}
+                    <h4>{{ leader.name }}</h4>
+                    <p>{{ leader.position }}</p>
+                </div>
+            {% empty %}
+                <p>No leaders listed yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Event Calendar -->
+    <!-- <div class="calendar-section">
+        <h2>Event Calendar</h2>
+        <div class="calendar-grid">
+            {% for event in upcoming_events|slice:":6" %}
+                <div class="calendar-card">
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.date|date:"F d, Y" }}</p>
+                    <p>{{ event.location }}</p>
+                </div>
+            {% empty %}
+                <p>No upcoming events scheduled.</p>
+            {% endfor %}
+        </div>
+    </div> -->
+
+    <!-- Trending on Campus -->
+    <div class="trending-section" id="trending-section">
+        <h2>Trending on Campus</h2>
+        <div class="trending-grid">
+            {% for event in upcoming_events|slice:":3" %}
+                <div class="box">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.title }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                    {% endif %}
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.date }}</p>
+                </div>
+            {% empty %}
+                <p>No trending events yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Stats with Counting Animation -->
+    <div class="stats-section">
+        <h2>Campus Stats</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h4 data-target="{{ total_users }}">0</h4>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-item">
+                <h4 data-target="{{ total_hosting_requests }}">0</h4>
+                <p>Hosting Requests</p>
+            </div>
+            <div class="stat-item">
+                <h4 data-target="{{ total_category }}">0</h4>
+                <p>Categories</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>CampX is your go-to platform for staying updated on all college events and activities.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: parthkhannaa@gmail.com</p>
+            <p>Phone: +91-8130112729</p>
+            <p>Address: MRIIRS</p>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CampX. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function scrollToContent() {
+            document.querySelector('.content-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            const hero = document.querySelector('.hero');
+            const scrollPos = window.scrollY;
+            hero.style.backgroundPositionY = `${scrollPos * 0.3}px`;
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            const boxes = document.querySelectorAll('.box, .gallery-item, .highlight-card, .leader-card, .calendar-card, .stat-item');
+            boxes.forEach((box, index) => {
+                box.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+
+            document.querySelectorAll('.clickable-box.not-authenticated').forEach(box => {
+                box.addEventListener('click', (e) => {
+                    if (!e.target.closest('a')) {
+                        window.location.href = '{% url "login" %}';
+                    }
+                });
+            });
+
+            const counters = document.querySelectorAll('.stat-item h4');
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText.replace(/,/g, '');
+                    const speed = 2000;
+                    const increment = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment).toLocaleString();
+                        setTimeout(updateCount, 10);
+                    } else {
+                        counter.innerText = target.toLocaleString();
+                    }
+                };
+                updateCount();
+            });
+
+            const h1 = document.getElementById('hero-h1');
+            const p = document.getElementById('hero-p');
+            const h1Texts = ["CampXConnect", "Your Event Hub", "Explore Events"];
+            const pTexts = ["Connect with Campus", "Discover Epic Moments", "Join the Fun"];
+            let h1Index = 0;
+            let pIndex = 0;
+
+            function typeH1() {
+                h1.textContent = h1Texts[h1Index];
+                h1Index = (h1Index + 1) % h1Texts.length;
+                setTimeout(typeH1, 4000);
+            }
+
+            function typeP() {
+                p.textContent = pTexts[pIndex];
+                pIndex = (pIndex + 1) % pTexts.length;
+                setTimeout(typeP, 4000);
+            }
+
+            typeH1();
+            setTimeout(typeP, 1000);
+        });
+
+        function openOverlay(imageSrc, title, winner, date, description) {
+            const overlay = document.getElementById('highlight-overlay');
+            const overlayImage = document.getElementById('overlay-image');
+            const overlayDetails = document.getElementById('overlay-details');
+
+            overlayImage.src = imageSrc;
+            overlayDetails.innerHTML = `
+                <h3>${title}</h3>
+                ${description ? `<p><strong>Description:</strong> ${description}</p>` : ''}
+                <p><strong>Date:</strong> ${date}</p>
+            `;
+            overlay.classList.add('active');
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('highlight-overlay');
+            overlay.classList.remove('active');
+        }
+
+        function openNewsOverlay(imageSrc, title, description, category, date, by, institution) {
+            const overlay = document.getElementById('news-overlay');
+            const overlayImage = document.getElementById('news-overlay-image');
+            const overlayDetails = document.getElementById('news-overlay-details');
+
+            if (imageSrc) {
+                overlayImage.src = imageSrc;
+                overlayImage.style.display = 'block';
+            } else {
+                overlayImage.style.display = 'none';
+            }
+
+            overlayDetails.innerHTML = `
+                <h3>${title}</h3>
+                ${description ? `<p><strong>Description:</strong><br>${description}</p>` : ''}
+                ${category ? `<p><strong>Category:</strong> ${category}</p>` : ''}
+                <p><strong>Published:</strong> ${date}</p>
+                ${by ? `<p><strong>By:</strong> ${by}</p>` : ''}
+                ${institution ? `<p><strong>Institution:</strong> ${institution}</p>` : ''}
+            `;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNewsOverlay() {
+            const overlay = document.getElementById('news-overlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>

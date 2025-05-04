@@ -1,0 +1,541 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Host an Event | CampusConnect</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 🔹 Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b); /* Deep space blue gradient */
+            color: #e0e0e0;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Starry Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="10" cy="10" r="1" fill="white" opacity="0.3"/><circle cx="50" cy="50" r="1.5" fill="white" opacity="0.5"/><circle cx="90" cy="90" r="1" fill="white" opacity="0.4"/></svg>') repeat;
+            opacity: 0.5;
+            z-index: -1;
+            animation: twinkle 20s infinite linear;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* 🔹 Header */
+        header {
+            background: linear-gradient(90deg, #0d1b2a, #1b263b); /* Space blue */
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: #ff4d6d; /* Vibrant pink */
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        nav ul li a:hover {
+            color: #ff4d6d;
+        }
+
+        /* 🔹 Main Container */
+        .event-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-container h2 {
+            color: #1b263b; /* Dark blue */
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-container p.subtitle {
+            color: #666;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: typing 3s steps(40, end) infinite alternate;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 2px solid #ff4d6d;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* 🔹 Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1b263b;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            background: #f0f4f8;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #ff4d6d; /* Vibrant pink */
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.3);
+        }
+
+        /* 🔹 Host Section */
+        .host-section {
+            background: linear-gradient(135deg, rgba(255, 240, 245, 0.9), rgba(255, 228, 225, 0.9));
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px dashed #ff4d6d;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .host-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 77, 109, 0.1) 10%, transparent 10%);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .host-section h3 {
+            color: #d81b60; /* Darker pink */
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .host-section .warning {
+            color: #5d0d0d;
+            font-size: 14px;
+            font-style: italic;
+            background: rgba(255, 240, 245, 0.8);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-left: 4px solid #ff4d6d;
+        }
+
+        /* 🔹 Readonly Fields */
+        input[readonly], select[disabled], .host-section input[readonly] {
+            background-color: #e9ecef !important;
+            cursor: not-allowed !important;
+            opacity: 0.7 !important;
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+
+        input[readonly]:focus, select[disabled]:focus, .host-section input[readonly]:focus {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        /* 🔹 Submit Button */
+        .btn-submit {
+            background: linear-gradient(90deg, #1b263b, #0d1b2a); /* Space blue */
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            grid-column: span 2;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 77, 109, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-submit:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-submit:hover {
+            background: #ff4d6d; /* Vibrant pink */
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        /* 🔹 Error Messages */
+        .errorlist {
+            color: #d81b60;
+            font-size: 13px;
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+
+        /* 🔹 Footer */
+        footer {
+            background: linear-gradient(90deg, #0d1b2a, #1b263b);
+            color: #e0e0e0;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        footer a {
+            color: #ff4d6d;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* 🔹 Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+
+            nav ul {
+                margin-top: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .full-width, .btn-submit {
+                grid-column: span 1;
+            }
+
+            .event-container {
+                width: 90%;
+                padding: 25px;
+                margin: 40px auto;
+            }
+
+            .event-container h2 {
+                font-size: 30px;
+            }
+
+            .event-container p.subtitle {
+                font-size: 14px;
+            }
+
+            input, textarea, select {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+
+            .btn-submit {
+                font-size: 14px;
+                padding: 14px;
+            }
+
+            .host-section h3 {
+                font-size: 20px;
+            }
+
+            .host-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            .event-container {
+                padding: 20px;
+            }
+
+            .event-container h2 {
+                font-size: 26px;
+            }
+
+            .form-grid {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div> <!-- Starry background layer -->
+    <!-- 🔹 Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">CampXConnect</div>
+            <nav>
+                <ul>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 🔹 Main Content -->
+    <div class="event-container">
+        <h2>Host an Event</h2>
+        <p class="subtitle">Create a memorable event and engage with the campus community! || C</p>
+
+        <!-- Display form errors -->
+        {% if form.errors %}
+            <div style="color: #d81b60; margin-bottom: 25px; text-align: center;">
+                <strong>Please correct the errors below:</strong>
+            </div>
+        {% endif %}
+
+        <br>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- 🔹 Two-Column Form Grid -->
+            <div class="form-grid">
+                <!-- Title -->
+                <div class="form-group full-width">
+                    <label for="id_title">Event Title</label>
+                    {{ form.title }}
+                    {{ form.title.errors }}
+                </div>
+
+                <!-- Description -->
+                <div class="form-group full-width">
+                    <label for="id_description">Description</label>
+                    {{ form.description }}
+                    {{ form.description.errors }}
+                </div>
+
+                <!-- Venue -->
+                <div class="form-group">
+                    <label for="id_venue">Venue</label>
+                    {{ form.venue }}
+                    {{ form.venue.errors }}
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label for="id_date">Date</label>
+                    {{ form.date }}
+                    {{ form.date.errors }}
+                </div>
+
+                <!-- Time -->
+                <div class="form-group">
+                    <label for="id_time">Time</label>
+                    {{ form.time }}
+                    {{ form.time.errors }}
+                </div>
+
+                <!-- Image -->
+                <div class="form-group">
+                    <label for="id_image">Event Image</label>
+                    {{ form.image }}
+                    {{ form.image.errors }}
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="id_category">Category</label>
+                    {{ form.category }}
+                    {{ form.category.errors }}
+                </div>
+
+                <!-- Apply Link -->
+                <div class="form-group">
+                    <label for="id_apply_link">Apply Link</label>
+                    {{ form.apply_link }}
+                    {{ form.apply_link.errors }}
+                </div>
+
+                <!-- Department -->
+                <div class="form-group">
+                    <label for="id_department">Department</label>
+                    {% if user.is_superuser %}
+                        {{ form.department }}
+                    {% else %}
+                        <input type="text" value="{{ user.department }}" class="form-control" readonly>
+                        <input type="hidden" name="department" value="{{ user.department.id }}">
+                    {% endif %}
+                    {{ form.department.errors }}
+                </div>
+            </div>
+
+            <!-- 🔹 Host Details Section -->
+            <div class="host-section full-width">
+                <h3>Host Information</h3>
+                <p class="warning">
+                    ℹ️ This information is automatically filled from your profile.
+                </p>
+                <div class="form-grid">
+                    <!-- Host Name -->
+                    <div class="form-group">
+                        <label for="id_host_name">Host Name</label>
+                        {{ form.host_name }}
+                        <input type="hidden" name="host_name" value="{{ user.first_name }}">
+                    </div>
+
+                    <!-- Host Email -->
+                    <div class="form-group">
+                        <label for="id_host_email">Host Email</label>
+                        {{ form.host_email }}
+                        <input type="hidden" name="host_email" value="{{ user.email }}">
+                    </div>
+
+                    <!-- Host Phone -->
+                    <div class="form-group">
+                        <label for="id_host_phone">Host Phone</label>
+                        {{ form.host_phone }}
+                        <input type="hidden" name="host_phone" value="{{ user.phone }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">Submit Event</button>
+        </form>
+    </div>
+
+    <!-- 🔹 Footer -->
+    <footer>
+        <div class="footer-container">
+            <p>© 2025 CampusConnect. All rights reserved.</p>
+            <p>Contact us at <a href="mailto:cx.campusconnect@gmail.com">cx.campusconnect@gmail.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Detail | CampXConnect</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        .post-detail-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+        }
+        .post-detail-card {
+            background: var(--white-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .post-marker {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0;
+        }
+        .user-details {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .post-title {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .post-image {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .post-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .post-caption {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .post-actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .share-btn, .comment-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .share-btn:hover, .comment-btn:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-btn:hover {
+            color: var(--highlight-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="post-detail-container">
+        <a href="{% url 'feed' %}" class="back-btn">← Back to Feed</a>
+        <div class="post-detail-card">
+            <div class="post-header">
+                <div class="post-marker">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="user-info">
+                    <p class="user-name">{{ post.user.first_name }}</p>
+                    <span class="user-details">{{ post.user.department.name }} | {{ post.user.institution.name }}</span>
+                    <span class="feed-timestamp">{{ post.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <h3 class="post-title">{{ post.event_title }}</h3>
+            {% if post.image %}
+                <div class="post-image">
+                    <img src="{{ post.image.url }}" alt="Event Post Image">
+                </div>
+            {% endif %}
+            <p class="post-caption">{{ post.caption }}</p>
+            <div class="post-actions">
+                <button class="share-btn" data-url="{{ request.build_absolute_uri }}">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="comment-btn">
+                    <i class="fas fa-comment"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Share functionality
+        document.querySelector(".share-btn").addEventListener("click", async function() {
+            const url = this.getAttribute("data-url");
+            const title = document.querySelector(".post-title").textContent;
+            const caption = document.querySelector(".post-caption").textContent;
+
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: title,
+                        text: caption,
+                        url: url
+                    });
+                } else {
+                    await navigator.clipboard.writeText(url);
+                    alert("Link copied to clipboard!");
+                }
+            } catch (err) {
+                console.error("Share failed:", err);
+            }
+        });
+
+        // Comment functionality
+        document.querySelector(".comment-btn").addEventListener("click", function() {
+            alert("Comments coming soon!");
+        });
+    </script>
+</body>
+</html> 

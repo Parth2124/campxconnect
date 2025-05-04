@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampX - CampusConnect</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode */
+            --primary-color: #00A1FF; /* Vibrant blue */
+            --secondary-color: #1A2B3C; /* Softer dark blue */
+            --text-color: #2D3748; /* Slate gray */
+            --highlight-color: #FF3E81; /* Pink accent */
+            --neutral-bg: #F7FAFC; /* Light gray-blue */
+            --white-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-bg: linear-gradient(135deg, #E6F0FA, #FFFFFF);
+
+            /* Dark Mode */
+            --dark-primary-color: #4DA8FF; /* Lighter blue */
+            --dark-secondary-color: #E2E8F0; /* Light gray */
+            --dark-text-color: #E2E8F0; /* Off-white */
+            --dark-highlight-color: #FF6B9C; /* Softer pink */
+            --dark-neutral-bg: #2D3748; /* Dark slate */
+            --dark-bg: #1A202C; /* Deep dark */
+            --dark-shadow-color: rgba(0, 0, 0, 0.3);
+            --dark-gradient-bg: linear-gradient(135deg, #2D3748, #1A202C);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: var(--dark-primary-color);
+            --secondary-color: var(--dark-secondary-color);
+            --text-color: var(--dark-text-color);
+            --highlight-color: var(--dark-highlight-color);
+            --neutral-bg: var(--dark-neutral-bg);
+            --white-bg: var(--dark-bg);
+            --shadow-color: var(--dark-shadow-color);
+            --gradient-bg: var(--dark-gradient-bg);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            background: var(--white-bg);;
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            background: transparent;
+        }
+
+        .header.scrolled {
+            background: var(--white-bg);
+            box-shadow: 0 2px 15px var(--shadow-color);
+        }
+
+        .header .logo {
+            font-size: 30px;
+            font-weight: 800;
+            color: wheat;
+            letter-spacing: -1px;
+            
+        }
+
+        .header .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .header .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: color 0.3s ease, background 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .header a:hover {
+            color: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        .header a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--highlight-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .header a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .header .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .header .hamburger:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--white-bg);
+            padding: 40px 20px;
+            z-index: 2000;
+            transition: left 0.5s ease;
+            box-shadow: 2px 0 15px var(--shadow-color);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .close-btn {
+            font-size: 36px;
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: right;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .close-btn:hover {
+            color: var(--highlight-color);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        /* News Section */
+        #news-section {
+            max-width: 1440px;
+            margin: 140px auto 80px;
+            padding: 0 40px;
+        }
+
+        #news-section h2 {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color:wheat;
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+            
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        #search-bar {
+            width: 100%;
+            max-width: 700px;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            background: var(--white-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        #search-bar:focus {
+            outline: none;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            transform: scale(1.02);
+        }
+
+        #news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            padding: 20px 0;
+        }
+
+        .news-item {
+            background: var(--neutral-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 161, 255, 0.1), transparent);
+            transition: transform 0.5s ease;
+            z-index: 0;
+        }
+
+        .news-item:hover::before {
+            transform: scale(1.5);
+        }
+
+        .news-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .news-item img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .news-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .news-details {
+            position: relative;
+            z-index: 1;
+        }
+
+        .news-details h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+
+        .news-details p {
+            font-size: 14px;
+            font-weight: 300;
+            margin: 8px 0;
+            color: var(--text-color);
+        }
+
+        .news-details p strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .news-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            text-decoration: none;
+            color: #FFFFFF;
+            font-weight: 600;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .news-btn:hover {
+            background: linear-gradient(135deg, var(--highlight-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-bg);
+            padding: 120px 40px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+        }
+
+        .footer-section h4 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .footer-section p, .footer-section ul li a {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-color);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--highlight-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: rgba(45, 55, 72, 0.8);
+        }
+
+        [data-theme="dark"] .footer-bottom {
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header .nav-center, .header .nav-right {
+                display: none;
+            }
+
+            .header .hamburger {
+                display: block;
+            }
+
+            #news-section {
+                margin: 100px auto 60px;
+                padding: 0 20px;
+            }
+
+            #news-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #news-section h2 {
+                font-size: 34px;
+            }
+
+            .news-details h3 {
+                font-size: 20px;
+            }
+
+            .news-btn {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">CampXConnect</div>
+        <div class="nav-center">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'index' %}#highlights-section">CXGallery</a>
+            <a href="{% url 'index' %}#trending-section">CXTrending</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'upcoming' %}">Upcoming Events</a>
+                <a href="{% url 'feed' %}">Feed</a>
+                <a href="{% url 'profile' user.trn %}"><i class="fas fa-user"></i></a>
+            {% endif %}
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" onclick="toggleSidebar()">×</div>
+        {% if user.is_authenticated %}
+            <p>Hey, {{ user.first_name }}!</p>
+        {% endif %}
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'index' %}#highlights-section">CXGallery</a>
+        <a href="{% url 'index' %}#trending-section">CXTrending</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'upcoming' %}">Upcoming Events</a>
+            <a href="{% url 'feed' %}">Feed</a>
+            <a href="{% url 'profile' user.trn %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- News Section -->
+    <div id="news-section">
+        <h2 id="change">Ongoing Events</h2>
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search events by Host, Name, Venue, Description...">
+        </div>
+        <div id="news-container">
+            {% for event in mrevents_list %}
+            <div class="news-item event-box {{ event.category|lower }}"
+                 data-title="{{ event.title|lower }}"
+                 data-description="{{ event.description|lower }}"
+                 data-venue="{{ event.venue|lower }}"
+                 data-date="{{ event.date|lower }}"
+                 data-contact="{{ event.contact_number|lower }}"
+                 data-email="{{ event.email|lower }}">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                {% endif %}
+                <div class="news-details">
+                    <h3>{{ event.title }}</h3>
+                    <p><strong>Description:</strong> {{ event.description }}</p>
+                    <p><strong>Date:</strong> {{ event.date }}</p>
+                    <p><strong>Time:</strong> {{ event.time }}</p>
+                    <p><strong>Venue:</strong> {{ event.venue }}</p>
+                    <p><strong>Contact:</strong> {{ event.contact_number }}</p>
+                    <p><strong>Email:</strong> {{ event.email }}</p>
+                    <a href="{{ event.link }}" target="_blank" class="news-btn">Join Us</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No events found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>CampX is your go-to platform for staying updated on all college events and activities.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: parthkhannaa@gmail.com</p>
+            <p>Phone: +91-8130112729</p>
+            <p>Address: MRIIRS</p>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CampX. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        function searchEvents() {
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            const newsItems = document.querySelectorAll('.news-item');
+            newsItems.forEach(item => {
+                const title = item.getAttribute('data-title');
+                const description = item.getAttribute('data-description');
+                const venue = item.getAttribute('data-venue');
+                const date = item.getAttribute('data-date');
+                const contact = item.getAttribute('data-contact');
+                const email = item.getAttribute('data-email');
+                item.style.display = (
+                    title.includes(searchQuery) ||
+                    description.includes(searchQuery) ||
+                    venue.includes(searchQuery) ||
+                    date.includes(searchQuery) ||
+                    contact.includes(searchQuery) ||
+                    email.includes(searchQuery)
+                ) ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            const newsItems = document.querySelectorAll('.news-item');
+            newsItems.forEach((item, index) => {
+                item.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+
+            document.getElementById('search-bar').addEventListener('input', searchEvents);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,892 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Feed | CampXConnect</title>
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'C2/cx.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode */
+            --primary-color: #00A1FF;
+            --secondary-color: #1A2B3C;
+            --text-color: #2D3748;
+            --highlight-color: #FF3E81;
+            --neutral-bg: #F7FAFC;
+            --white-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-bg: #FFFFFF;
+
+            /* Dark Mode */
+            --dark-primary-color: #4DA8FF;
+            --dark-secondary-color: #E2E8F0;
+            --dark-text-color: #E2E8F0;
+            --dark-highlight-color: #FF6B9C;
+            --dark-neutral-bg: #2D3748;
+            --dark-bg: #1A202C;
+            --dark-shadow-color: rgba(0, 0, 0, 0.3);
+            --dark-gradient-bg: linear-gradient(135deg, #2D3748, #1A202C);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: var(--dark-primary-color);
+            --secondary-color: var(--dark-secondary-color);
+            --text-color: var(--dark-text-color);
+            --highlight-color: var(--dark-highlight-color);
+            --neutral-bg: var(--dark-neutral-bg);
+            --white-bg: var(--dark-bg);
+            --shadow-color: var(--dark-shadow-color);
+            --gradient-bg: var(--dark-gradient-bg);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            background: var(--white-bg);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            background: transparent;
+        }
+
+        .header.scrolled {
+            background: var(--white-bg);
+            box-shadow: 0 2px 15px var(--shadow-color);
+        }
+
+        .header .logo {
+            font-size: 30px;
+            font-weight: 800;
+            color: wheat;
+            letter-spacing: -1px;
+        }
+
+        .header .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .header .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .header a:hover {
+            color: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        .header a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--highlight-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .header a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .header .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .header .hamburger:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--white-bg);
+            padding: 40px 20px;
+            z-index: 2000;
+            transition: left 0.5s ease;
+            box-shadow: 2px 0 15px var(--shadow-color);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .close-btn {
+            font-size: 36px;
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: right;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .close-btn:hover {
+            color: var(--highlight-color);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        /* Feed Container */
+        .feed-container {
+            max-width: 1440px;
+            margin: 140px auto 80px;
+            padding: 0 40px;
+        }
+
+        .feed-title {
+            font-size: 50px;
+            font-weight: 800;
+            text-align: center;
+            color: wheat;
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 15px 25px;
+            border-radius: 50px 0 0 50px;
+            border: none;
+            background: var(--white-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            transform: scale(1.02);
+        }
+
+        #search-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            color: #FFFFFF;
+            border: none;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #search-btn:hover {
+            background: linear-gradient(135deg, var(--highlight-color), var(--primary-color));
+            transform: scale(1.05);
+        }
+
+        /* Feed Grid */
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .feed-post {
+            background: linear-gradient(135deg, var(--neutral-bg), var(--white-bg));
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .feed-post::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 161, 255, 0.1), transparent);
+            transition: transform 0.5s ease;
+            z-index: 0;
+            border-radius: 15px;
+        }
+
+        .feed-post:hover::before {
+            transform: scale(1.5);
+        }
+
+        .feed-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--shadow-color);
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .post-marker {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .post-marker i {
+            font-size: 20px;
+        }
+
+        .post-marker:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 161, 255, 0.5);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+
+        .user-details {
+            font-size: 12px;
+            color: var(--text-color);
+            opacity: 0.7;
+            display: flex;
+            gap: 5px;
+        }
+
+        .feed-timestamp {
+            font-size: 12px;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .feed-event-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin: 10px 0;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feed-image {
+            width: 100%;
+            margin: 15px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .feed-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .feed-post:hover .feed-image img {
+            transform: scale(1.05);
+        }
+
+        .feed-caption {
+            font-size: 14px;
+            color: var(--text-color);
+            margin: 10px 0;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feed-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--neutral-bg);
+        }
+
+        .share-btn, .comment-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .share-btn:hover, .comment-btn:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .no-posts {
+            text-align: center;
+            font-size: 20px;
+            color: var(--text-color);
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-bg);
+            padding: 120px 40px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--highlight-color));
+        }
+
+        .footer-section h4 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .footer-section p, .footer-section ul li a {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-color);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--highlight-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: rgba(45, 55, 72, 0.8);
+        }
+
+        [data-theme="dark"] .footer-bottom {
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header .nav-center, .header .nav-right {
+                display: none;
+            }
+
+            .header .hamburger {
+                display: block;
+            }
+
+            .feed-container {
+                margin: 100px auto 60px;
+                padding: 0 20px;
+            }
+
+            .feed-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feed-title {
+                font-size: 34px;
+            }
+
+            .feed-event-title {
+                font-size: 18px;
+            }
+
+            .feed-caption {
+                font-size: 12px;
+            }
+
+            .share-btn, .comment-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+            }
+
+            .user-name {
+                font-size: 14px;
+            }
+
+            .user-details {
+                font-size: 10px;
+            }
+        }
+
+        /* Add these styles inside your existing style tag */
+        .project-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .project-quote {
+            font-size: 16px;
+            font-style: italic;
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        /* Update the share button hover effect */
+        .share-btn:hover {
+            color: var(--highlight-color);
+            background: rgba(0, 161, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Add a tooltip for share button */
+        .share-btn {
+            position: relative;
+        }
+
+        .share-btn::before {
+            content: 'Share with CampXConnect';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .share-btn:hover::before {
+            opacity: 1;
+            visibility: visible;
+            bottom: 120%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">CampXConnect</div>
+        <div class="nav-center">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'index' %}#highlights-section">CXGallery</a>
+            <a href="{% url 'index' %}#trending-section">CXTrending</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'upcoming' %}">Events</a>
+                <a href="{% url 'profile' user.email %}"><i class="fas fa-user"></i></a>
+            {% endif %}
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <i class="fas fa-bars hamburger" onclick="toggleSidebar()"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" onclick="toggleSidebar()">×</div>
+        {% if user.is_authenticated %}
+            <p>Hey, {{ user.first_name }}!</p>
+        {% endif %}
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'index' %}#highlights-section">CXGallery</a>
+        <a href="{% url 'index' %}#trending-section">CXTrending</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'upcoming' %}">Events</a>
+            <a href="{% url 'profile' user.email %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- Event Feed -->
+    <div class="feed-container">
+        <h2 class="feed-title">Momentum</h2>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search by username, date (e.g., 'Jan 12, 2025'), Event Name...">
+            <button id="search-btn">🔍</button>
+        </div>
+        <div class="feed-grid">
+            {% for post in event_posts %}
+                <div class="feed-post" data-username="{{ post.user.username|lower }}" data-title="{{ post.event_title|lower }}" data-caption="{{ post.caption|lower }}" data-date="{{ post.created_at|date:'M d, Y'|lower }}" data-post-url="{% url 'post_detail' post.id %}">
+                    <div class="feed-header">
+                        <div class="post-marker">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="user-info">
+                            <p class="user-name">{{ post.user.first_name }}</p>
+                            <span class="user-details">{{ post.user.department.name }} | {{ post.user.institution.name }}</span>
+                            <span class="feed-timestamp">{{ post.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                    <h3 class="feed-event-title">{{ post.event_title }}</h3>
+                    {% if post.image %}
+                        <div class="feed-image">
+                            <img src="{{ post.image.url }}" alt="Event Post Image" loading="lazy">
+                        </div>
+                    {% else %}
+                        <div class="feed-image">
+                            <img src="{% static 'images/default.jpg' %}" alt="Default Image" loading="lazy">
+                        </div>
+                    {% endif %}
+                    <p class="feed-caption">{{ post.caption }}</p>
+                    <div class="feed-actions">
+                        <button class="share-btn" data-url="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"><i class="fas fa-share-alt"></i></button>
+                        <button class="comment-btn"><i class="fas fa-comment"></i></button>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="no-posts">🚀 No event posts yet. Stay tuned!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>CampX is your go-to platform for staying updated on all college events and activities.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: parthkhannaa@gmail.com</p>
+            <p>Phone: +91-8130112729</p>
+            <p>Address: MRIIRS</p>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CampX. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const toggleIcon = document.querySelector('.theme-toggle i');
+            toggleIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Avatar Color Generation
+            function generateAvatarColor(username) {
+                const colors = ['#2c3e50', '#8e44ad', '#c0392b', '#d35400', '#27ae60', '#2980b9'];
+                let hash = 0;
+                for (let i = 0; i < username.length; i++) {
+                    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                return colors[Math.abs(hash) % colors.length];
+            }
+
+            document.querySelectorAll('.post-marker').forEach(marker => {
+                const username = marker.closest('.feed-post').getAttribute('data-username');
+                const highlightColor = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color').trim();
+                marker.style.background = `linear-gradient(135deg, ${generateAvatarColor(username)}, ${highlightColor})`;
+            });
+
+            // Share Button Functionality
+            document.querySelectorAll(".share-btn").forEach(button => {
+                button.addEventListener("click", async function () {
+                    try {
+                        const post = this.closest(".feed-post");
+                        if (!post) {
+                            showToast("❌ Could not find post details.");
+                            return;
+                        }
+
+                        const postUrl = this.getAttribute("data-url");
+                        if (!postUrl || postUrl === '#') {
+                            showToast("❌ No valid URL available for sharing.");
+                            return;
+                        }
+
+                        // Get all required elements
+                        const userNameElement = post.querySelector(".user-name");
+                        const titleElement = post.querySelector(".feed-event-title");
+                        const captionElement = post.querySelector(".feed-caption");
+                        const imageElement = post.querySelector(".feed-image img");
+
+                        // Extract text content
+                        const userName = userNameElement ? userNameElement.textContent.trim() : "Unknown User";
+                        const postTitle = titleElement ? titleElement.textContent.trim() : "Untitled Event";
+                        const postCaption = captionElement ? captionElement.textContent.trim() : "";
+                        const imageUrl = imageElement ? imageElement.src : null;
+
+                        // Create share text
+                        const shareText = 
+`🏛️ CampXConnect
+"Connecting Campus Communities, Empowering Student Events"
+
+👤 Posted by: ${userName}
+🎯 Event: ${postTitle}
+📝 Description: ${postCaption}
+${imageUrl ? `🖼️ Image: ${imageUrl}\n` : ''}
+🔗 Link: ${postUrl}
+
+#CampXConnect #CampusEvents`;
+
+                        console.log('Sharing:', { userName, postTitle, postCaption, imageUrl, postUrl }); // Debug log
+
+                        if (navigator.share) {
+                            await navigator.share({
+                                title: `${userName}'s Event: ${postTitle}`,
+                                text: shareText,
+                                url: postUrl
+                            });
+                            showToast("✅ Shared successfully!");
+                        } else {
+                            await navigator.clipboard.writeText(shareText);
+                            showToast("✅ Copied to clipboard!");
+                        }
+                    } catch (err) {
+                        console.error("Share failed:", err);
+                        showToast("❌ Failed to share. Check console for details.");
+                    }
+                });
+            });
+
+            // Comment Button Functionality
+            document.querySelectorAll(".comment-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const post = this.closest(".feed-post");
+                    const postTitle = post.querySelector(".feed-event-title").textContent;
+                    showToast(`💬 Commenting on "${postTitle}" is coming soon!`);
+                });
+            });
+
+            // Search Functionality
+            const searchInput = document.getElementById("search-input");
+            const searchBtn = document.getElementById("search-btn");
+            const posts = document.querySelectorAll(".feed-post");
+
+            function filterPosts() {
+                const query = searchInput.value.trim().toLowerCase();
+                posts.forEach(post => {
+                    const username = post.getAttribute("data-username");
+                    const title = post.getAttribute("data-title");
+                    const caption = post.getAttribute("data-caption");
+                    const date = post.getAttribute("data-date");
+
+                    const matches = 
+                        username.includes(query) ||
+                        title.includes(query) ||
+                        caption.includes(query) ||
+                        date.includes(query);
+
+                    post.classList.toggle("hidden", !matches);
+                });
+
+                const visiblePosts = Array.from(posts).some(post => !post.classList.contains("hidden"));
+                document.querySelector(".no-posts").style.display = visiblePosts ? "none" : "block";
+            }
+
+            searchBtn.addEventListener("click", filterPosts);
+            searchInput.addEventListener("keyup", function (event) {
+                if (event.key === "Enter") filterPosts();
+            });
+
+            // Toast Notification
+            function showToast(message) {
+                const toast = document.createElement("div");
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
+                    color: #FFFFFF;
+                    padding: 12px 25px;
+                    border-radius: 10px;
+                    z-index: 9999;
+                    font-size: 14px;
+                    box-shadow: 0 4px 15px var(--shadow-color);
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            // Animation
+            posts.forEach((post, index) => {
+                post.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+        });
+    </script>
+</body>
+</html>
