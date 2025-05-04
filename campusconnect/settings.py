@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", ".ngrok-free.app", ".ngrok.io"]  # Allow ngrok domains
 
-CSRF_TRUSTED_ORIGINS = ["*","http://127.0.0.1", "http://localhost","https://127.0.0.1","https://*.ngrok.io", "https://*.ngrok-free.app"]  # Trust ngrok for CSRF
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "http://localhost","https://127.0.0.1","https://*.ngrok.io", "https://*.ngrok-free.app"]  # Trust ngrok for CSRF
 
 SESSION_COOKIE_SECURE = False  # Disable secure session cookies (for testing on ngrok)
 CSRF_COOKIE_SECURE = False  # Disable CSRF secure cookie (for testing on ngrok)
